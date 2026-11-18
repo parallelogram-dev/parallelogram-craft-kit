@@ -1,0 +1,59 @@
+{
+    "name": "parallelogram/craft-kit",
+    "description": "Shared contracts and Craft adapters for Parallelogram's Craft CMS plugins: cache-tag collection and replay, tag invalidation, site URL providers, and element method registration.",
+    "type": "library",
+    "license": "MIT",
+    "keywords": ["craftcms", "cache", "tags"],
+    "authors": [
+        {
+            "name": "Parallelogram",
+            "homepage": "https://parallelogram.com.au"
+        }
+    ],
+    "support": {
+        "email": "support@parallelogram.com.au",
+        "issues": "https://github.com/parallelogram-dev/parallelogram-craft-kit/issues",
+        "source": "https://github.com/parallelogram-dev/parallelogram-craft-kit",
+        "docs": "https://github.com/parallelogram-dev/parallelogram-craft-kit#readme"
+    },
+    "require": {
+        "php": "^8.3",
+        "craftcms/cms": "^5.6"
+    },
+    "require-dev": {
+        "carthage-software/mago": "^1.59",
+        "phpunit/phpunit": "^12.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "parallelogram\\craftkit\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "parallelogram\\craftkit\\test\\": "test/"
+        }
+    },
+    "scripts": {
+        "lint": "mago lint",
+        "analyze": "mago analyze",
+        "fmt": "mago fmt",
+        "fmt-check": "mago fmt --check",
+        "test": "phpunit",
+        "check": [
+            "@fmt-check",
+            "@lint",
+            "@analyze",
+            "@test"
+        ]
+    },
+    "config": {
+        "sort-packages": true,
+        "allow-plugins": {
+            "carthage-software/mago": true,
+            "craftcms/plugin-installer": true,
+            "yiisoft/yii2-composer": true
+        }
+    },
+    "minimum-stability": "stable"
+}
