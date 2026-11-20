@@ -240,8 +240,13 @@
   outline: none;
 }
 
+.pk-repeater__cell .select,
 .pk-repeater__cell select {
   width: 100%;
+}
+
+.pk-repeater__cell .select select {
+  min-height: 34px;
 }
 
 .pk-repeater__error {

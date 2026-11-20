@@ -149,15 +149,21 @@ function mount(root) {
         const input = control(doc, field, row.data[field.name], id);
         input.setAttribute('aria-label', field.label ?? field.name);
 
+        let shown = input;
+        if (input.tagName === 'SELECT') {
+          shown = el(doc, 'div', 'select fullwidth');
+          shown.append(input);
+        }
+
         if (errors[field.name]) {
           input.setAttribute('aria-invalid', 'true');
           input.setAttribute('aria-describedby', `${id}-error`);
           const message = el(doc, 'p', 'pk-repeater__error error');
           message.id = `${id}-error`;
           message.textContent = errors[field.name];
-          cell.append(input, message);
+          cell.append(shown, message);
         } else {
-          cell.append(input);
+          cell.append(shown);
         }
 
         const update = () => {
