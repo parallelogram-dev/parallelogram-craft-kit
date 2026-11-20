@@ -7,7 +7,11 @@
  # Icons are always Craft's own system icons (iconSvg()), never drawings of the kit's own.
  -#}
 
-{#- Registers the kit's scripts and styles, and the icons its scripts use. Call it once per page. -#}
+{#-
+ # Registers the kit's scripts and styles, and the icons its scripts use. Call it once per page.
+ # While an admin has Advanced on, it also adds a hidden marker so [data-pk-advanced] parts show on
+ # pages without the switch (the switch lives on each plugin's settings page).
+ -#}
 {% macro assets() -%}
     {%- do view.registerAssetBundle('parallelogram\\craftkit\\craft\\cp\\UiKitAsset') -%}
     {%- set icons -%}
@@ -18,6 +22,9 @@
         </template>
     {%- endset -%}
     {%- do view.registerHtml(icons, 3, 'pk-icons') -%}
+    {%- if currentUser and currentUser.admin and currentUser.getPreference('pkAdvancedMode') in [true, 1, '1', 'true', 'yes', 'on'] -%}
+        {%- do view.registerHtml('<span hidden data-pk-advanced-state></span>', 3, 'pk-advanced-state') -%}
+    {%- endif -%}
 {%- endmacro %}
 
 {#- One of Craft's system icons, e.g. pk.icon('eye'). With a label it is announced; without, it is hidden from screen readers. -#}
@@ -117,6 +124,31 @@
             </optgroup>
         {%- endfor -%}
     </p-select>
+{%- endmacro %}
+
+{#-
+ # Craft's own card tabs: the markup Craft draws above a content pane, and Feed Me's tabs use.
+ # Items are keyed by tab ID (not a number), each { label, url? }. A tab with a url loads that page;
+ # one without shows the panel whose id is its tab ID and hides the others' (give the hidden ones
+ # Craft's `hidden` class to start with). Options: label (the tab list's name for screen readers),
+ # pane (true, the default: as the content pane's header, run by Craft's own tab script, so only
+ # once per page and first in the content block; false: anywhere, run by the kit).
+ -#}
+{% macro tabs(items, active = null, options = {}) -%}
+    {%- set pane = options.pane ?? true -%}
+    {%- set tabs = items|map((tab, id) => tab|merge({ url: tab.url ?? ('#' ~ id) })) -%}
+    {%- set containerAttributes = pane ? { id: 'tabs' } : { data: { 'pk-tabs': true } } -%}
+    {%- set context = {
+        tabs: tabs,
+        selectedTab: active ?? tabs|keys|first,
+        tablistLabel: options.label ?? null,
+        containerAttributes: containerAttributes,
+    } -%}
+    {%- if pane -%}
+        <header id="content-header" class="pane-header">{% include '_includes/tabs' with context only %}</header>
+    {%- else -%}
+        {% include '_includes/tabs' with context only %}
+    {%- endif -%}
 {%- endmacro %}
 
 {#- A button that opens a modal made with {% embed '_pk/modal' %}. -#}

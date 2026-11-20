@@ -139,6 +139,25 @@ ParallelogramJS's `<p-modal>`: the body scrolls and the footer stays put.
 {{ pk.modalButton('add-file', 'Add a root file') }}
 ```
 
+#### Tabs
+
+Craft's own card tabs, the same markup Craft draws above a content pane and Feed Me uses, through Craft's `_includes/tabs`. Key the items by tab ID (not a number). A tab with a `url` loads that page; one without shows the panel whose `id` is the tab's ID.
+
+```twig
+{# First in the content block: the content pane's header, run by Craft's own tab script #}
+{{ pk.tabs({
+    main: { label: 'Main Menu', url: cpUrl('p-nav/editor/main') },
+    footer: { label: 'Footer', url: cpUrl('p-nav/editor/footer') },
+}, 'main', { label: 'Menus' }) }}
+
+{# Anywhere else, switching panels in the page #}
+{{ pk.tabs({ general: { label: 'General' }, social: { label: 'Social profiles' } }, 'general', { pane: false }) }}
+<div id="general">…</div>
+<div id="social" class="hidden">…</div>
+```
+
+The pane form uses the `tabs` and `content-header` IDs, so use it once per page and don't also set the layout's `tabs` variable.
+
 #### In script
 
 `UiKitAsset` adds two entries to Craft's own import map (`View::registerJsImport()`, Craft 5.6+), so plugin scripts loaded as modules can import the kit and its copy of ParallelogramJS by name:

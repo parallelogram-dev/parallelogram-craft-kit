@@ -109,13 +109,16 @@
 
 /*
  * Advanced-only parts stay hidden unless an admin has switched Advanced on. :has() reads the
- * switch's state on first paint; the class is set by the script for browsers without :has().
+ * switch's state on first paint, or, on pages without the switch, the hidden state marker that
+ * pk.assets() adds while the preference is on; the class is set by the script for browsers
+ * without :has().
  */
 [data-pk-advanced] {
   display: none !important;
 }
 
 :root:has([data-pk-advanced-switch][aria-checked='true']) [data-pk-advanced],
+:root:has([data-pk-advanced-state]):not(:has([data-pk-advanced-switch][aria-checked='false'])) [data-pk-advanced],
 .pk-advanced-on [data-pk-advanced] {
   display: revert !important;
 }

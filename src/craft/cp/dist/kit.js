@@ -14,6 +14,7 @@ import { initInfo } from './info.js';
 import { initModals } from './modal.js';
 import { initRepeaters } from './repeater.js';
 import { initSelects } from './select.js';
+import { initTabs } from './tabs.js';
 
 export { advancedMode, isOn, PREFERENCE, toggled } from './advanced-state.js';
 export { countLabel } from './count.js';
@@ -21,6 +22,7 @@ export { icon } from './icons.js';
 export { createModal } from './modal.js';
 export { keptRows, moved, rowErrors, toJson, toNamedPairs } from './repeater-model.js';
 export { customOption } from './select.js';
+export { panelId, panelStates } from './tabs-model.js';
 
 /**
  * @param {ParentNode} root
@@ -31,6 +33,7 @@ export function initAll(root = document) {
   initModals(root);
   initRepeaters(root);
   initSelects(root);
+  initTabs(root);
 }
 
 if (document.readyState === 'loading') {
