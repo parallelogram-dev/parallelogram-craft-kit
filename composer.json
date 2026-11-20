@@ -1,6 +1,6 @@
 {
     "name": "parallelogram/craft-kit",
-    "description": "Shared contracts and Craft adapters for Parallelogram's Craft CMS plugins: cache-tag collection and replay, tag invalidation, site URL providers, and element method registration.",
+    "description": "Shared contracts, Craft adapters and a control panel UI kit for Parallelogram's Craft CMS plugins: cache-tag collection and replay, tag invalidation, site URL providers, element method registration, and shared CP controls.",
     "type": "library",
     "license": "MIT",
     "keywords": ["craftcms", "cache", "tags"],

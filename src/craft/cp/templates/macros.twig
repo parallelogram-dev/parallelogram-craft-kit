@@ -1,0 +1,125 @@
+{#-
+ # Parallelogram CP UI kit macros. Plugins call CpUi::register($this) in init(), then:
+ #
+ #   {% import '_pk/macros' as pk %}
+ #   {{ pk.assets() }}
+ #
+ # Icons are always Craft's own system icons (iconSvg()), never drawings of the kit's own.
+ -#}
+
+{#- Registers the kit's scripts and styles, and the icons its scripts use. Call it once per page. -#}
+{% macro assets() -%}
+    {%- do view.registerAssetBundle('parallelogram\\craftkit\\craft\\cp\\UiKitAsset') -%}
+    {%- set icons -%}
+        <template id="pk-icons">
+            {%- for name in ['grip-dots-vertical', 'xmark', 'plus', 'circle-info', 'eye', 'eye-slash', 'ellipsis', 'image'] -%}
+                <span data-icon="{{ name }}">{{ iconSvg(name) }}</span>
+            {%- endfor -%}
+        </template>
+    {%- endset -%}
+    {%- do view.registerHtml(icons, 3, 'pk-icons') -%}
+{%- endmacro %}
+
+{#- One of Craft's system icons, e.g. pk.icon('eye'). With a label it is announced; without, it is hidden from screen readers. -#}
+{% macro icon(name, label = null) -%}
+    <span class="pk-icon"{% if not label %} aria-hidden="true"{% endif %}>{{ iconSvg(name, null, label) }}</span>
+{%- endmacro %}
+
+{#- An ⓘ button whose tooltip holds a longer explanation. Options: id, label, start (open towards the end of the line). -#}
+{% macro info(text, options = {}) -%}
+    {%- import _self as pk -%}
+    {%- set id = options.id ?? ('pk-tip-' ~ random()) -%}
+    <span class="pk-info{{ (options.start ?? false) ? ' pk-info--start' }}">
+        <button type="button" class="pk-info__button" data-pk-info aria-describedby="{{ id }}" aria-label="{{ options.label ?? 'More information' }}">{{ pk.icon('circle-info') }}</button>
+        <span class="pk-info__tip" role="tooltip" id="{{ id }}" hidden>{{ text }}</span>
+    </span>
+{%- endmacro %}
+
+{#- A status badge next to a title. Kind: null, 'warning', 'danger' or 'success'. -#}
+{% macro badge(label, kind = null) -%}
+    <span class="pk-badge{{ kind ? ' pk-badge--' ~ kind }}">{{ label }}</span>
+{%- endmacro %}
+
+{#- "8 items (2 hidden)". Words: one, many, hidden, empty. Matches countLabel() in kit.js. -#}
+{% macro count(total, hidden = 0, words = {}) -%}
+    {%- set total = max(0, total|default(0)|round(0, 'floor')) -%}
+    {%- set hidden = min(total, max(0, hidden|default(0)|round(0, 'floor'))) -%}
+    {%- if total == 0 and (words.empty ?? '') is not empty -%}
+        <span class="pk-count">{{ words.empty }}</span>
+    {%- else -%}
+        <span class="pk-count">{{ total }} {{ total == 1 ? (words.one ?? 'item') : (words.many ?? 'items') }}{% if hidden > 0 %} ({{ hidden }} {{ words.hidden ?? 'hidden' }}){% endif %}</span>
+    {%- endif -%}
+{%- endmacro %}
+
+{#- The Simple / Advanced switch, for admins only; nothing at all for anyone else. Mark Advanced-only parts with data-pk-advanced. -#}
+{% macro advancedSwitch(pluginHandle, label = 'Advanced') -%}
+    {%- if currentUser and currentUser.admin -%}
+        {%- set on = currentUser.getPreference('pkAdvancedMode') in [true, 1, '1', 'true', 'yes', 'on'] -%}
+        <button type="button" class="pk-switch" role="switch" aria-checked="{{ on ? 'true' : 'false' }}" data-pk-advanced-switch data-pk-action="{{ pluginHandle }}/pk-ui/advanced">{{ label }}</button>
+    {%- endif -%}
+{%- endmacro %}
+
+{#-
+ # Rows added with "+ Add …", reordered by dragging, removed with ×. Fields: name, label, type
+ # (text, url, email, select, checkbox), required, pattern, patternMessage, options ({ value, label }),
+ # placeholder. Options: mode ('names' for name[0][field] inputs, 'json' for one input), addLabel,
+ # errors (per row index, then field name), min.
+ -#}
+{% macro repeater(name, fields, rows = [], options = {}) -%}
+    {%- set config = {
+        name: name,
+        mode: options.mode ?? 'names',
+        fields: fields,
+        rows: rows,
+        addLabel: options.addLabel ?? 'Add a row',
+        errors: options.errors ?? {},
+        min: options.min ?? 0,
+    } -%}
+    <div class="pk-repeater"{% if options.id is defined %} id="{{ options.id }}"{% endif %} data-pk-repeater>
+        <script type="application/json" data-pk-config>{{ config|json_encode(constant('JSON_HEX_TAG') b-or constant('JSON_HEX_AMP') b-or constant('JSON_HEX_APOS') b-or constant('JSON_HEX_QUOT'))|raw }}</script>
+    </div>
+{%- endmacro %}
+
+{#-
+ # A searchable picker (ParallelogramJS's p-select). Options: { value, label, description?, secondary?, group? };
+ # options with the same group are listed under it. Attributes: id, placeholder, required, ariaLabel,
+ # custom (let someone keep what they typed), customLabel ("Use “{value}”").
+ -#}
+{% macro select(name, options, value = null, attributes = {}) -%}
+    {%- set grouped = {} -%}
+    {%- set loose = [] -%}
+    {%- for option in options -%}
+        {%- if option.group ?? null -%}
+            {%- set grouped = grouped|merge({ (option.group): (grouped[option.group] ?? [])|merge([option]) }) -%}
+        {%- else -%}
+            {%- set loose = loose|merge([option]) -%}
+        {%- endif -%}
+    {%- endfor -%}
+    {%- set known = options|map(o => o.value ~ '')|filter(v => v == value ~ '')|length > 0 -%}
+    <p-select name="{{ name }}"
+        {%- if attributes.id is defined %} id="{{ attributes.id }}"{% endif %}
+        {%- if attributes.placeholder is defined %} placeholder="{{ attributes.placeholder }}"{% endif %}
+        {%- if attributes.ariaLabel is defined %} aria-label="{{ attributes.ariaLabel }}"{% endif %}
+        {%- if attributes.required ?? false %} required{% endif %}
+        {%- if value is not null %} value="{{ value }}"{% endif %}
+        {%- if attributes.custom ?? false %} data-pk-custom{% if attributes.customLabel is defined %} data-pk-custom-label="{{ attributes.customLabel }}"{% endif %}{% endif %}>
+        {%- if (attributes.custom ?? false) and value is not null and value ~ '' is not empty and not known -%}
+            <option value="{{ value }}" data-pk-custom-option selected>{{ value }}</option>
+        {%- endif -%}
+        {%- for option in loose -%}
+            <option value="{{ option.value }}"{% if option.description ?? null %} data-description="{{ option.description }}"{% endif %}{% if option.secondary ?? null %} data-secondary="{{ option.secondary }}"{% endif %}{% if value is not null and option.value ~ '' == value ~ '' %} selected{% endif %}>{{ option.label }}</option>
+        {%- endfor -%}
+        {%- for group, members in grouped -%}
+            <optgroup label="{{ group }}">
+                {%- for option in members -%}
+                    <option value="{{ option.value }}"{% if option.description ?? null %} data-description="{{ option.description }}"{% endif %}{% if option.secondary ?? null %} data-secondary="{{ option.secondary }}"{% endif %}{% if value is not null and option.value ~ '' == value ~ '' %} selected{% endif %}>{{ option.label }}</option>
+                {%- endfor -%}
+            </optgroup>
+        {%- endfor -%}
+    </p-select>
+{%- endmacro %}
+
+{#- A button that opens a modal made with {% embed '_pk/modal' %}. -#}
+{% macro modalButton(modalId, label, options = {}) -%}
+    <button type="button" class="btn{{ options.class is defined ? ' ' ~ options.class }}" data-pk-modal-open="#{{ modalId }}">{{ label }}</button>
+{%- endmacro %}

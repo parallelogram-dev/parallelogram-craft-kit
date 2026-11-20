@@ -1,0 +1,29 @@
+{#-
+ # A modal: ParallelogramJS's p-modal, with a scrolling body and a footer that stays put.
+ #
+ #   {% embed '_pk/modal' with { id: 'add-file', title: 'Add a root file', primaryLabel: 'Add file' } %}
+ #       {% block body %}…fields…{% endblock %}
+ #   {% endembed %}
+ #   {{ pk.modalButton('add-file', 'Add a root file') }}
+ #
+ # Variables: id, title, size (sm, md, lg), primaryLabel, cancelLabel, dangerLabel.
+ # Blocks: title, body, actions (replaces Cancel and the primary button), danger.
+ # Anything marked data-modal-close closes it; the primary button is a submit button, so a form
+ # inside the body can listen for it.
+ -#}
+<p-modal id="{{ id }}" class="pk-modal" data-modal-size="{{ size ?? 'md' }}">
+    <h2 slot="title">{% block title %}{{ title ?? '' }}{% endblock %}</h2>
+    <div class="pk-modal__body">{% block body %}{% endblock %}</div>
+    {%- set danger = block('danger') is defined ? block('danger')|trim : '' -%}
+    {%- if danger is not empty or (dangerLabel ?? null) %}
+        <div slot="secondary">{% if danger is not empty %}{{ danger|raw }}{% else %}<button type="button" class="pk-link pk-link--danger" data-pk-danger>{{ dangerLabel }}</button>{% endif %}</div>
+    {%- endif %}
+    <div slot="actions" class="pk-modal__actions">
+        {%- block actions -%}
+            <button type="button" class="btn" data-modal-close>{{ cancelLabel ?? 'Cancel'|t('app') }}</button>
+            {%- if primaryLabel ?? null %}
+                <button type="submit" class="btn submit" data-pk-primary>{{ primaryLabel }}</button>
+            {%- endif -%}
+        {%- endblock -%}
+    </div>
+</p-modal>
