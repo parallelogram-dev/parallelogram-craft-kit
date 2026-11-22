@@ -58,11 +58,11 @@
     {%- endif -%}
 {%- endmacro %}
 
-{#- The Simple / Advanced switch, for admins only; nothing at all for anyone else. Mark Advanced-only parts with data-pk-advanced. -#}
-{% macro advancedSwitch(pluginHandle, label = 'Advanced') -%}
+{#- The Simple / Advanced switch, for admins only; nothing at all for anyone else. Mark Advanced-only parts with data-pk-advanced (and simple-only ones with data-pk-simple). Options: header (move it beside the page's Save button). -#}
+{% macro advancedSwitch(pluginHandle, label = 'Advanced', options = {}) -%}
     {%- if currentUser and currentUser.admin -%}
         {%- set on = currentUser.getPreference('pkAdvancedMode') in [true, 1, '1', 'true', 'yes', 'on'] -%}
-        <button type="button" class="pk-switch" role="switch" aria-checked="{{ on ? 'true' : 'false' }}" data-pk-advanced-switch data-pk-action="{{ pluginHandle }}/pk-ui/advanced">{{ label }}</button>
+        <button type="button" class="pk-switch{{ (options.header ?? false) ? ' pk-switch--header' }}" role="switch" aria-checked="{{ on ? 'true' : 'false' }}" data-pk-advanced-switch data-pk-action="{{ pluginHandle }}/pk-ui/advanced"{% if options.header ?? false %} data-pk-header{% endif %}>{{ label }}</button>
     {%- endif -%}
 {%- endmacro %}
 
@@ -84,6 +84,26 @@
     } -%}
     <div class="pk-repeater"{% if options.id is defined %} id="{{ options.id }}"{% endif %} data-pk-repeater>
         <script type="application/json" data-pk-config>{{ config|json_encode(constant('JSON_HEX_TAG') b-or constant('JSON_HEX_AMP') b-or constant('JSON_HEX_APOS') b-or constant('JSON_HEX_QUOT'))|raw }}</script>
+    </div>
+{%- endmacro %}
+
+{#-
+ # Short values as chips, such as query parameter names: type and press Enter or a comma to add
+ # one. Posts name[] (after an empty name, so an emptied list still posts). Options: id,
+ # placeholder, ariaLabel.
+ -#}
+{% macro chips(name, values = [], options = {}) -%}
+    {%- import _self as pk -%}
+    <div class="pk-chips text fullwidth" data-pk-chips>
+        <input type="hidden" name="{{ name }}" value="" data-pk-chips-name>
+        <span class="pk-chips__list" data-pk-chips-list>
+            {%- for value in values -%}
+                <span class="pk-chip"><span>{{ value }}</span><input type="hidden" name="{{ name }}[]" value="{{ value }}" data-pk-chip></span>
+            {%- endfor -%}
+        </span>
+        <input type="text" class="pk-chips__input"{% if options.id is defined %} id="{{ options.id }}"{% endif %}
+            {%- if options.placeholder is defined %} placeholder="{{ options.placeholder }}"{% endif %}
+            aria-label="{{ options.ariaLabel ?? 'Add a value' }}" autocomplete="off" data-pk-chips-input>
     </div>
 {%- endmacro %}
 

@@ -3,6 +3,8 @@
 ## Unreleased
 
 ### Added
+- `pk.chips(name, values, options)`: short values such as query parameter names, added with Enter or a comma and removed with ×; posts `name[]`.
+- `pk.advancedSwitch(handle, label, { header: true })` puts the switch beside the page's Save button; `[data-pk-simple]` marks parts shown only while Advanced is off.
 - A control panel UI kit for Parallelogram plugins (`parallelogram\craftkit\craft\cp`):
   - `CpUi::register($plugin)` adds the `_pk` template root and a `pk-ui` controller to a plugin.
   - `UiKitAsset` ships the kit's scripts and styles and a pinned copy of ParallelogramJS 0.7.29 (the drag engine, PModal and PSelect), and adds entries to Craft's import map so plugin scripts can import `@parallelogram/ui-kit/kit.js` and `@parallelogram-js/core/…`.

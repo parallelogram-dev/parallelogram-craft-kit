@@ -129,6 +129,13 @@
   display: revert !important;
 }
 
+/* The other way round: [data-pk-simple] shows only while Advanced is off. */
+:root:has([data-pk-advanced-switch][aria-checked='true']) [data-pk-simple],
+:root:has([data-pk-advanced-state]):not(:has([data-pk-advanced-switch][aria-checked='false'])) [data-pk-simple],
+.pk-advanced-on [data-pk-simple] {
+  display: none !important;
+}
+
 /* ⓘ tooltips */
 .pk-info {
   position: relative;
@@ -307,4 +314,70 @@ p-select {
   --menu-shadow: 0 0 0 1px rgb(31 41 51 / 0.1), 0 6px 20px rgb(31 41 51 / 0.18);
   display: block;
   font-size: 14px;
+}
+
+/* Chips (pk.chips) */
+.pk-chips {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px;
+  min-height: 34px;
+  padding: 3px 6px;
+  cursor: text;
+}
+
+.pk-chips__list {
+  display: contents;
+}
+
+.pk-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  padding: 1px 2px 1px 8px;
+  border-radius: 4px;
+  background: var(--gray-100, #f3f7fc);
+  border: 1px solid var(--hairline-color, rgba(51, 64, 77, 0.1));
+  font-family: var(--code-font, monospace);
+  font-size: 12px;
+}
+
+.pk-chip__remove {
+  display: inline-flex;
+  width: 18px;
+  height: 18px;
+  align-items: center;
+  justify-content: center;
+  border-radius: 3px;
+  color: var(--light-text-color, #606d7b);
+  cursor: pointer;
+}
+
+.pk-chip__remove:hover,
+.pk-chip__remove:focus-visible {
+  background: var(--gray-200, #e4edf6);
+  color: var(--text-color, #1f2937);
+}
+
+.pk-chip__remove svg {
+  width: 10px;
+  height: 10px;
+}
+
+.pk-chips__input {
+  flex: 1 1 120px;
+  min-width: 120px;
+  border: 0;
+  outline: 0;
+  padding: 4px 2px;
+  background: transparent;
+  font-family: var(--code-font, monospace);
+  font-size: 12px;
+}
+
+/* The Advanced switch beside the Save button */
+.pk-switch--header {
+  align-self: center;
+  margin-inline-end: 12px;
 }

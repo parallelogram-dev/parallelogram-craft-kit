@@ -6,6 +6,9 @@
  *
  *   <button type="button" class="pk-switch" role="switch" aria-checked="false"
  *           data-pk-advanced-switch data-pk-action="p-nav/pk-ui/advanced">Advanced</button>
+ *
+ * With `pk.advancedSwitch(handle, label, { header: true })` the switch moves into the page
+ * header, beside the Save button.
  */
 import { toggled } from './advanced-state.js';
 
@@ -30,6 +33,9 @@ export function initAdvanced(root = document, options = {}) {
 
   for (const control of root.querySelectorAll('[data-pk-advanced-switch]:not([data-pk-ready])')) {
     control.dataset.pkReady = '';
+    if ('pkHeader' in control.dataset) {
+      control.ownerDocument.getElementById('action-buttons')?.prepend(control);
+    }
     let state = { admin: true, on: control.getAttribute('aria-checked') === 'true' };
     control.ownerDocument.documentElement.classList.toggle('pk-advanced-on', state.on);
 
