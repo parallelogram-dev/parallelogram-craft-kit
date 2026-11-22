@@ -2,7 +2,8 @@
  * Parallelogram CP UI kit: tabs made with `pk.tabs(…, { pane: false })`, anywhere on a page. Craft's
  * own tab script (Craft.Tabs) handles the keyboard, focus and the overflow menu; this shows the
  * selected in-page tab's panel and hides the rest. Tabs in the content pane's header (the default)
- * are left to Craft's control panel, which already does this.
+ * are left to Craft's control panel, which already does this, unless a namespace (a plugin's
+ * settings page, say) renamed their #tabs id so Craft no longer finds them.
  */
 import { panelId, panelStates } from './tabs-model.js';
 
@@ -13,7 +14,7 @@ export function initTabs(root = document) {
   const Tabs = window.Craft?.Tabs;
   if (!Tabs || !window.jQuery) return;
 
-  root.querySelectorAll('[data-pk-tabs]:not([data-pk-tabs-ready])').forEach(container => {
+  root.querySelectorAll('[data-pk-tabs]:not([data-pk-tabs-ready]):not(#tabs)').forEach(container => {
     container.dataset.pkTabsReady = '';
     const links = [...container.querySelectorAll('[role="tab"]')];
     const show = selected => {

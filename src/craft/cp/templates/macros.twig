@@ -155,12 +155,13 @@
  # one without shows the panel whose id is its tab ID and hides the others' (give the hidden ones
  # Craft's `hidden` class to start with). Options: label (the tab list's name for screen readers),
  # pane (true, the default: as the content pane's header, run by Craft's own tab script, so only
- # once per page and first in the content block; false: anywhere, run by the kit).
+ # once per page and first in the content block; the kit runs them instead where a namespace,
+ # such as a plugin's settings page, renames the #tabs id; false: anywhere, run by the kit).
  -#}
 {% macro tabs(items, active = null, options = {}) -%}
     {%- set pane = options.pane ?? true -%}
     {%- set tabs = items|map((tab, id) => tab|merge({ url: tab.url ?? ('#' ~ id) })) -%}
-    {%- set containerAttributes = pane ? { id: 'tabs' } : { data: { 'pk-tabs': true } } -%}
+    {%- set containerAttributes = pane ? { id: 'tabs', data: { 'pk-tabs': true } } : { data: { 'pk-tabs': true } } -%}
     {%- set context = {
         tabs: tabs,
         selectedTab: active ?? tabs|keys|first,
