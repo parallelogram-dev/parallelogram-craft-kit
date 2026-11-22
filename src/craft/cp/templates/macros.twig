@@ -90,9 +90,11 @@
 {#-
  # A searchable picker (ParallelogramJS's p-select). Options: { value, label, description?, secondary?, group? };
  # options with the same group are listed under it. Attributes: id, placeholder, required, ariaLabel,
- # custom (let someone keep what they typed), customLabel ("Use “{value}”").
+ # custom (let someone keep what they typed), customLabel ("Use “{value}”"), searchable (a search box
+ # above the list; on by default once there are more than 8 options, or whenever custom is set).
  -#}
 {% macro select(name, options, value = null, attributes = {}) -%}
+    {%- set searchable = attributes.searchable ?? ((attributes.custom ?? false) or options|length > 8) -%}
     {%- set grouped = {} -%}
     {%- set loose = [] -%}
     {%- for option in options -%}
@@ -108,6 +110,7 @@
         {%- if attributes.placeholder is defined %} placeholder="{{ attributes.placeholder }}"{% endif %}
         {%- if attributes.ariaLabel is defined %} aria-label="{{ attributes.ariaLabel }}"{% endif %}
         {%- if attributes.required ?? false %} required{% endif %}
+        {%- if searchable %} searchable{% endif %}
         {%- if value is not null %} value="{{ value }}"{% endif %}
         {%- if attributes.custom ?? false %} data-pk-custom{% if attributes.customLabel is defined %} data-pk-custom-label="{{ attributes.customLabel }}"{% endif %}{% endif %}>
         {%- if (attributes.custom ?? false) and value is not null and value ~ '' is not empty and not known -%}

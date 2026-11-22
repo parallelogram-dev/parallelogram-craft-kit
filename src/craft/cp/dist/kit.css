@@ -101,6 +101,12 @@
     var(--enabled-color, var(--green-500));
 }
 
+.pk-switch[aria-disabled='true'],
+.pk-switch:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
 .pk-switch:focus-visible {
   outline: 2px solid var(--blue-500);
   outline-offset: 2px;
@@ -295,6 +301,10 @@ p-select {
   --select-description-color: var(--gray-550, var(--gray-500));
   --select-hover-bg: var(--gray-050);
   --select-selected-bg: var(--blue-050);
+  --menu-bg: var(--white, #fff);
+  --menu-border-color: var(--hairline-color, var(--gray-200));
+  --menu-border-radius: var(--large-border-radius, 8px);
+  --menu-shadow: 0 0 0 1px rgb(31 41 51 / 0.1), 0 6px 20px rgb(31 41 51 / 0.18);
   display: block;
   font-size: 14px;
 }
