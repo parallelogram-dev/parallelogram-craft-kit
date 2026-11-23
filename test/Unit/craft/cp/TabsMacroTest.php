@@ -44,7 +44,7 @@ final class TabsMacroTest extends TestCase
      * @throws Error
      */
     #[Test]
-    public function linksTabsInThePaneHeaderForCraftsOwnTabScript(): void
+    public function linksTabsInThePaneHeaderForCraftsTabScriptOrTheKitsWhenRenamed(): void
     {
         $html = $this->render(
             "{{ pk.tabs({ main: { label: 'Main Menu', url: '/admin/p-nav/editor/main' }, project: { label: 'Project', url: '/admin/p-nav/editor/project' } }, 'project', { label: 'Menus' }) }}",
@@ -60,7 +60,7 @@ final class TabsMacroTest extends TestCase
                     ],
                     'selectedTab'         => 'project',
                     'tablistLabel'        => 'Menus',
-                    'containerAttributes' => ['id' => 'tabs'],
+                    'containerAttributes' => ['id' => 'tabs', 'data' => ['pk-tabs' => true]],
                 ],
             ],
             [
