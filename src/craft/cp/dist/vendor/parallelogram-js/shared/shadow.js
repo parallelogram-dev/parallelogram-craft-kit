@@ -1,0 +1,2 @@
+import{a as e}from"./trusted.js";const t=new Map;function n(e,...n){if((e=>"adoptedStyleSheets"in e&&"function"==typeof CSSStyleSheet&&"function"==typeof CSSStyleSheet.prototype.replaceSync)(e))e.adoptedStyleSheets=n.map(e=>{let n=t.get(e);return n||(n=new CSSStyleSheet,n.replaceSync(e),t.set(e,n)),n});else for(const t of[...n].reverse()){const n=document.createElement("style");n.textContent=t,e.prepend(n)}}function o(t,n){t.innerHTML=e(n)}export{n as a,o as s};
+//# sourceMappingURL=shadow.js.map

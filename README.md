@@ -62,6 +62,116 @@ Templates can then call `asset.picture('hero')` and `craft.pNav`. The method rec
 
 `parallelogram\craftkit\testing` ships with in-memory doubles for plugin test suites: `InMemoryTagCollector`, `InMemoryTaggedStore`, `RecordingInvalidator` and `StaticUrlProvider`. `InMemoryTagCollector` nests and merges collections the same way Craft does.
 
+### CP UI kit
+
+Shared control panel pieces, so Parallelogram plugins look and behave alike, and native. Icons are always Craft's own system icons (`iconSvg()`), never drawings of the kit's own.
+
+Register a plugin once, in its `init()`:
+
+```php
+use parallelogram\craftkit\craft\cp\CpUi;
+
+CpUi::register($this); // the `_pk` template root and the `pk-ui` controller
+```
+
+Then, in a CP template:
+
+```twig
+{% import '_pk/macros' as pk %}
+{{ pk.assets() }} {# once per page: scripts, styles, import map entries and icons #}
+```
+
+#### Badges, counts, icons and tooltips
+
+```twig
+{{ pk.icon('eye') }}
+{{ pk.badge('Hidden') }} {{ pk.badge('Expired', 'warning') }} {{ pk.badge('Missing', 'danger') }}
+{{ pk.count(8, 2) }}                                     {# 8 items (2 hidden) #}
+{{ pk.count(0, 0, { empty: 'No menus yet' }) }}
+Drag to reorder {{ pk.info('To put an item inside another, drag it right.') }}
+```
+
+#### Simple / Advanced
+
+Admins get a switch; everyone else gets nothing, and always sees the simple view. Anything marked `data-pk-advanced` shows only while the switch is on. The choice is saved to the user's `pkAdvancedMode` preference, shared by every plugin.
+
+```twig
+{{ pk.advancedSwitch('p-nav') }}
+<div class="field" data-pk-advanced>…handles, paths, raw options…</div>
+```
+
+In PHP, `AdvancedMode::for($user->admin, $user->getPreference(AdvancedMode::PREFERENCE))->on` gives the same answer.
+
+#### Repeaters
+
+Rows added with "+ Add …", reordered by their handle, removed with ×, checked as they change. By default they submit as `name[0][field]`; `mode: 'json'` submits one input holding a JSON array.
+
+```twig
+{{ pk.repeater('profiles', [
+    { name: 'type', label: 'Type', type: 'select', required: true, options: [
+        { value: 'instagram', label: 'Instagram' }, { value: 'other', label: 'Other' },
+    ] },
+    { name: 'url', label: 'Address', type: 'url', required: true },
+], values.profiles, { addLabel: 'Add a profile', errors: errors.profiles ?? {} }) }}
+```
+
+Field types: `text`, `url`, `email`, `select`, `checkbox`. Fields can be `required` and carry a `pattern` with a `patternMessage`.
+
+#### Searchable selects
+
+ParallelogramJS's `<p-select>`, with groups and descriptions. `custom: true` lets someone keep what they typed when nothing matches.
+
+```twig
+{{ pk.select('schemaType', [
+    { value: 'Article', label: 'Article', group: 'Creative works', description: 'A news or blog article.' },
+    { value: 'ProfessionalService', label: 'Professional service', group: 'Organisations' },
+], profile.schemaType, { ariaLabel: 'Schema type', custom: true }) }}
+```
+
+#### Modals
+
+ParallelogramJS's `<p-modal>`: the body scrolls and the footer stays put.
+
+```twig
+{% embed '_pk/modal' with { id: 'add-file', title: 'Add a root file', primaryLabel: 'Add file' } %}
+    {% block body %}…fields…{% endblock %}
+{% endembed %}
+{{ pk.modalButton('add-file', 'Add a root file') }}
+```
+
+#### Tabs
+
+Craft's own card tabs, the same markup Craft draws above a content pane and Feed Me uses, through Craft's `_includes/tabs`. Key the items by tab ID (not a number). A tab with a `url` loads that page; one without shows the panel whose `id` is the tab's ID.
+
+```twig
+{# First in the content block: the content pane's header, run by Craft's own tab script #}
+{{ pk.tabs({
+    main: { label: 'Main Menu', url: cpUrl('p-nav/editor/main') },
+    footer: { label: 'Footer', url: cpUrl('p-nav/editor/footer') },
+}, 'main', { label: 'Menus' }) }}
+
+{# Anywhere else, switching panels in the page #}
+{{ pk.tabs({ general: { label: 'General' }, social: { label: 'Social profiles' } }, 'general', { pane: false }) }}
+<div id="general">…</div>
+<div id="social" class="hidden">…</div>
+```
+
+The pane form uses the `tabs` and `content-header` IDs, so use it once per page and don't also set the layout's `tabs` variable.
+
+#### In script
+
+`UiKitAsset` adds two entries to Craft's own import map (`View::registerJsImport()`, Craft 5.6+), so plugin scripts loaded as modules can import the kit and its copy of ParallelogramJS by name:
+
+```js
+import { initAll, createModal, countLabel } from '@parallelogram/ui-kit/kit.js';
+import { Sortable } from '@parallelogram-js/core/draggable.js';
+
+createModal({ title: 'Edit item', body: form, primaryLabel: 'Apply', onPrimary: () => apply() });
+initAll(container); // after adding kit markup yourself
+```
+
+The pinned ParallelogramJS files are committed in `src/craft/cp/dist/vendor`. To update them, change the version in `package.json`, then run `npm ci && npm run vendor`. `npm run test:js` runs the kit's script tests.
+
 ### Mago stub
 
 Mago reads `Craft::$app` as possibly null, which floods a plugin's analysis with false errors. `stubs/Craft.php` fixes this. Add it to a plugin's `mago.toml`:

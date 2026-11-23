@@ -1,0 +1,14 @@
+{
+  "name": "parallelogram-craft-kit-assets",
+  "private": true,
+  "description": "Pins the ParallelogramJS modules copied into the CP UI kit's assets. The copy is committed; run `npm ci && npm run vendor` only to update it.",
+  "license": "UNLICENSED",
+  "type": "module",
+  "scripts": {
+    "vendor": "node scripts/vendor-pjs.mjs",
+    "test:js": "node --test \"test/js/*.test.mjs\""
+  },
+  "devDependencies": {
+    "@parallelogram-js/core": "0.7.29"
+  }
+}

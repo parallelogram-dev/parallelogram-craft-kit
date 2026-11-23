@@ -1,0 +1,383 @@
+/*
+ * Parallelogram CP UI kit: styles for the kit's controls, and the control panel's colours handed to
+ * ParallelogramJS's modal and select through their custom properties, so both look native.
+ */
+
+/* Craft's icons, as copied from #pk-icons or written by pk.icon() */
+.pk-icon {
+  display: inline-grid;
+  flex: none;
+  place-items: center;
+  width: 1em;
+  height: 1em;
+  line-height: 1;
+}
+
+.pk-icon svg {
+  width: 100%;
+  height: 100%;
+  fill: currentColor;
+}
+
+/* Status badges: Hidden, Expired, Missing, … */
+.pk-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 1px 7px;
+  border-radius: 999px;
+  background: var(--gray-100);
+  color: var(--gray-600);
+  font-size: 11px;
+  font-weight: 600;
+  line-height: 1.5;
+  white-space: nowrap;
+  vertical-align: middle;
+}
+
+.pk-badge--warning {
+  background: var(--yellow-050, #fffbeb);
+  color: var(--yellow-800, #854d0e);
+}
+
+.pk-badge--danger {
+  background: var(--red-050, #fef2f2);
+  color: var(--error-color);
+}
+
+.pk-badge--success {
+  background: var(--green-050, #f0fdf4);
+  color: var(--green-700, #15803d);
+}
+
+/* "8 items (2 hidden)" */
+.pk-count {
+  color: var(--gray-550, var(--gray-500));
+  font-size: 13px;
+}
+
+/* Text-style buttons and the danger link in a modal's footer */
+.pk-link {
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--link-color, var(--blue-600));
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.pk-link--danger {
+  color: var(--error-color);
+}
+
+/* The Simple / Advanced switch */
+.pk-switch {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 2px;
+  border: 0;
+  background: none;
+  color: var(--gray-550, var(--gray-500));
+  font: inherit;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.pk-switch::before {
+  content: '';
+  width: 30px;
+  height: 18px;
+  border-radius: 9px;
+  background:
+    radial-gradient(circle at 9px 50%, #fff 6px, transparent 6.5px),
+    var(--gray-300);
+  transition: background 0.15s;
+}
+
+.pk-switch[aria-checked='true']::before {
+  background:
+    radial-gradient(circle at 21px 50%, #fff 6px, transparent 6.5px),
+    var(--enabled-color, var(--green-500));
+}
+
+.pk-switch[aria-disabled='true'],
+.pk-switch:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.pk-switch:focus-visible {
+  outline: 2px solid var(--blue-500);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/*
+ * Advanced-only parts stay hidden unless an admin has switched Advanced on. :has() reads the
+ * switch's state on first paint, or, on pages without the switch, the hidden state marker that
+ * pk.assets() adds while the preference is on; the class is set by the script for browsers
+ * without :has().
+ */
+[data-pk-advanced] {
+  display: none !important;
+}
+
+:root:has([data-pk-advanced-switch][aria-checked='true']) [data-pk-advanced],
+:root:has([data-pk-advanced-state]):not(:has([data-pk-advanced-switch][aria-checked='false'])) [data-pk-advanced],
+.pk-advanced-on [data-pk-advanced] {
+  display: revert !important;
+}
+
+/* The other way round: [data-pk-simple] shows only while Advanced is off. */
+:root:has([data-pk-advanced-switch][aria-checked='true']) [data-pk-simple],
+:root:has([data-pk-advanced-state]):not(:has([data-pk-advanced-switch][aria-checked='false'])) [data-pk-simple],
+.pk-advanced-on [data-pk-simple] {
+  display: none !important;
+}
+
+/* ⓘ tooltips */
+.pk-info {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  vertical-align: middle;
+}
+
+.pk-info__button {
+  display: grid;
+  place-items: center;
+  width: 20px;
+  height: 20px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: none;
+  color: var(--gray-400);
+  font-size: 14px;
+  cursor: help;
+}
+
+.pk-info__button:hover,
+.pk-info__button:focus-visible {
+  color: var(--blue-600);
+  outline: none;
+}
+
+.pk-info__tip {
+  position: absolute;
+  z-index: 100;
+  top: calc(100% + 6px);
+  right: -6px;
+  width: max-content;
+  max-width: 300px;
+  padding: 8px 10px;
+  border-radius: 6px;
+  background: var(--gray-900);
+  color: var(--gray-050);
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 1.45;
+  text-align: start;
+  box-shadow: 0 10px 30px rgb(0 0 0 / 0.18);
+}
+
+.pk-info__tip[hidden] {
+  display: none;
+}
+
+.pk-info--start .pk-info__tip {
+  right: auto;
+  left: -6px;
+}
+
+/* Repeaters */
+.pk-repeater__head,
+.pk-repeater__row {
+  display: grid;
+  grid-template-columns: 20px repeat(var(--pk-repeater-fields, 2), minmax(0, 1fr)) 28px;
+  gap: 8px;
+  align-items: start;
+}
+
+.pk-repeater__head {
+  margin-bottom: 4px;
+}
+
+.pk-repeater--empty .pk-repeater__head {
+  display: none;
+}
+
+.pk-repeater__label {
+  color: var(--gray-550, var(--gray-500));
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.pk-repeater__row {
+  padding: 4px 0;
+  border-radius: 6px;
+}
+
+.pk-repeater__row.draggable-source--is-dragging {
+  opacity: 0.35;
+}
+
+.pk-repeater__handle {
+  display: grid;
+  place-items: center;
+  height: 34px;
+  color: var(--gray-400);
+  font-size: 14px;
+  cursor: grab;
+}
+
+.pk-repeater__remove {
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 34px;
+  padding: 0;
+  border: 0;
+  border-radius: 5px;
+  background: none;
+  color: var(--gray-400);
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.pk-repeater__remove:hover,
+.pk-repeater__remove:focus-visible {
+  background: var(--gray-100);
+  color: var(--error-color);
+  outline: none;
+}
+
+.pk-repeater__cell .select,
+.pk-repeater__cell select {
+  width: 100%;
+}
+
+.pk-repeater__cell .select select {
+  min-height: 34px;
+}
+
+.pk-repeater__error {
+  margin: 4px 0 0;
+  font-size: 12px;
+}
+
+.pk-repeater__add {
+  margin-top: 6px;
+}
+
+/* ParallelogramJS's modal, in the control panel's colours, with Craft's buttons in the footer */
+.pk-modal,
+p-modal {
+  --modal-backdrop-bg: rgb(31 41 51 / 0.35);
+  --modal-panel-bg: var(--white, #fff);
+  --modal-panel-color: var(--text-color, var(--gray-700));
+  --modal-panel-border: var(--hairline-color, var(--gray-200));
+  --modal-header-bg: var(--white, #fff);
+  --modal-header-border: var(--hairline-color, var(--gray-200));
+  --modal-footer-bg: var(--gray-050);
+  --modal-footer-border: var(--hairline-color, var(--gray-200));
+  --modal-close-hover-bg: var(--gray-100);
+  --modal-shadow: 0 10px 30px rgb(31 41 51 / 0.18), 0 0 0 1px rgb(31 41 51 / 0.08);
+  font-size: 14px;
+}
+
+.pk-modal [slot='title'],
+p-modal [slot='title'] {
+  margin: 0;
+  font-size: 17px;
+}
+
+.pk-modal__actions {
+  display: flex;
+  gap: 8px;
+}
+
+/* ParallelogramJS's select, as a Craft text input */
+p-select {
+  --select-border-color: var(--ui-control-color, var(--gray-300));
+  --select-focus-color: var(--blue-500);
+  --select-bg: var(--input-bg, #fbfcfe);
+  --select-text: var(--text-color, var(--gray-700));
+  --select-placeholder: var(--gray-400);
+  --select-description-color: var(--gray-550, var(--gray-500));
+  --select-hover-bg: var(--gray-050);
+  --select-selected-bg: var(--blue-050);
+  --menu-bg: var(--white, #fff);
+  --menu-border-color: var(--hairline-color, var(--gray-200));
+  --menu-border-radius: var(--large-border-radius, 8px);
+  --menu-shadow: 0 0 0 1px rgb(31 41 51 / 0.1), 0 6px 20px rgb(31 41 51 / 0.18);
+  display: block;
+  font-size: 14px;
+}
+
+/* Chips (pk.chips) */
+.pk-chips {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px;
+  min-height: 34px;
+  padding: 3px 6px;
+  cursor: text;
+}
+
+.pk-chips__list {
+  display: contents;
+}
+
+.pk-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  padding: 1px 2px 1px 8px;
+  border-radius: 4px;
+  background: var(--gray-100, #f3f7fc);
+  border: 1px solid var(--hairline-color, rgba(51, 64, 77, 0.1));
+  font-family: var(--code-font, monospace);
+  font-size: 12px;
+}
+
+.pk-chip__remove {
+  display: inline-flex;
+  width: 18px;
+  height: 18px;
+  align-items: center;
+  justify-content: center;
+  border-radius: 3px;
+  color: var(--light-text-color, #606d7b);
+  cursor: pointer;
+}
+
+.pk-chip__remove:hover,
+.pk-chip__remove:focus-visible {
+  background: var(--gray-200, #e4edf6);
+  color: var(--text-color, #1f2937);
+}
+
+.pk-chip__remove svg {
+  width: 10px;
+  height: 10px;
+}
+
+.pk-chips__input {
+  flex: 1 1 120px;
+  min-width: 120px;
+  border: 0;
+  outline: 0;
+  padding: 4px 2px;
+  background: transparent;
+  font-family: var(--code-font, monospace);
+  font-size: 12px;
+}
+
+/* The Advanced switch beside the Save button */
+.pk-switch--header {
+  align-self: center;
+  margin-inline-end: 12px;
+}

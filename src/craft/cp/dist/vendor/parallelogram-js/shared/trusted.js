@@ -1,0 +1,2 @@
+const e=e=>e,t=(e,t)=>{let r=!1;try{r=globalThis.trustedTypes?.createPolicy(e,t)??!1}catch{console.warn(`Trusted Types blocked policy "${e}"`)}return r};let r,a;const c=()=>a??=t("parallelogram-scripts",{createScript:e,createScriptURL:e}),l=a=>(r??=t("parallelogram",{createHTML:e}))?r.createHTML(a):a,s=e=>c()?a.createScript(e):e,o=e=>c()?a.createScriptURL(e):e;export{l as a,s as b,o as t};
+//# sourceMappingURL=trusted.js.map
