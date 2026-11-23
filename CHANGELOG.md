@@ -1,5 +1,10 @@
 # Release Notes for Parallelogram Craft Kit
 
+## 0.2.1 - 2026-11-23
+
+### Fixed
+- The Mago stub for `Craft` declares `createGuzzleClient()`, so plugins that call it analyse cleanly when craft-kit is installed from Packagist.
+
 ## 0.2.0 - 2026-11-23
 
 ### Added
